@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Checkout | Sparrow Photography</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<link rel="stylesheet" type="text/css" href="styles.css">
+	</head>
+	<body>
+
+		<nav class="nav">
+			<a class="logo" href="index.html"><strong>Sparrow Photography</strong></a>
+			<div class="nav-items">
+				<a aria-current="page" href="checkout.html"><span aria-hidden="true">&#x1f6d2;</span> Cart <span id="cart-count"></span></a>
+			</div>
+		</nav>
+
+		<h1>Checkout</h1>
+		<div id="app">Loading...</div>
+
+
+		<footer>
+			<p><em>Photos by Jack Sparrow. All rights reserved.</em></p>
+		</footer>
+
+
+		<script type="module">
+			import {render} from 'https://cdn.jsdelivr.net/npm/reefjs@12/dist/reef.es.min.js';
+			import {getPhotos} from './components/api.js';
+			import {inCart} from './components/cart.js';
+
+
+			// Get the #app element
+			let app = document.querySelector('#app');
+
+			/**
+			 * Generate the cart HTML
+			 * @param  {Array}  photos The photo data
+			 * @return {String}        The cart HTML string
+			 */
+			function cartHTML (photos) {
+
+				// Get the photos that are in the cart
+				let photosInCart = photos.filter(function (photo) {
+					return inCart(photo.id);
+				});
+
+				// If there are no items in the cart
+				if (!photosInCart.length) {
+					return '<p>You have no photos in your cart.</p>';
+				}
+
+				// Otherwise, generate table
+				return `
+					<table>
+						<thead>
+							<tr>
+								<th width="150">Photo</th>
+								<th>Name</th>
+								<th class="text-right">Price</th>
+							</tr>
+						</thead>
+						<tbody>
+							${photosInCart.map(function (photo) {
+								return `
+									<tr>
+										<td><img alt="${photo.description}" src="${photo.url}"></td>
+										<td>${photo.name}</td>
+										<td class="text-right">$${photo.price}</td>
+									</tr>`;
+
+							}).join('')}
+						</tbody>
+					</table>
+					<p class="text-right">
+						<strong>Total:</strong> $${photosInCart.reduce(function (total, photo) {
+							return total + photo.price;
+						}, 0)}
+					</p>`;
+
+			}
+
+			// Initialize
+			getPhotos().then(function (photos) {
+				render(app, cartHTML(photos));
+			});
+		</script>
+
+	</body>
+</html>

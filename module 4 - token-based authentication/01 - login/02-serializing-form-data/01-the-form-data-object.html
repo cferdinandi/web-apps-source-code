@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<title>The FormData Object</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<style type="text/css">
+			body {
+				margin: 0 auto;
+				max-width: 30em;
+				width: 88%;
+			}
+
+			label,
+			input,
+			textarea {
+				display: block;
+				width: 100%;
+			}
+
+			input,
+			textarea {
+				margin-bottom: 1em;
+			}
+
+			textarea {
+				min-height: 8em;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<h1>The FormData Object</h1>
+
+		<form id="post">
+
+			<label for="title">Title</label>
+			<input type="text" name="title" id="title" value="Go to the beach">
+
+			<label for="body">Body</label>
+			<textarea id="body" name="body">Soak up the sun and swim in the ocean.</textarea>
+
+			<input type="hidden" name="userId" value="1">
+
+			<button>Submit</button>
+
+		</form>
+
+
+		<script>
+			// Get the form
+			let form = document.querySelector('#post');
+
+			// Get all field data from the form
+			let data = new FormData(form);
+			console.log(data);
+
+
+			// Loop through each entry
+			for (let entry of data) {
+				// console.log(entry);
+			}
+
+
+			// Destructure the entries into key/value pairs
+			for (let [key, value] of data) {
+				console.log(key);
+				console.log(value);
+			}
+		</script>
+	</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>URLSearchParams.set()</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	</head>
+	<body>
+
+
+		<script>
+			// An array of wizards
+			let wizards = ['Gandalf', 'Ursula', 'Merlin'];
+
+			// Create a URL object
+			let url = new URL('https://vanillajsacademy.com');
+
+			// Add the wizards query string parameter
+			url.searchParams.set('wizards', wizards);
+
+			// Get the value
+			let wizardsParam = url.searchParams.get('wizards');
+			console.log(wizardsParam);
+
+			// Convert it to an array
+			let arr = wizardsParam.split(',');
+			console.log(arr);
+			
+			// Delete the wizards query string parameter
+			url.searchParams.delete('wizards');
+			console.log(url.href);
+		</script>
+
+	</body>
+</html>

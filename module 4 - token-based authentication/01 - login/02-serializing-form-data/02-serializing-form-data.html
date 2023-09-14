@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<title>Serializing FormData into an object</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<style type="text/css">
+			body {
+				margin: 0 auto;
+				max-width: 30em;
+				width: 88%;
+			}
+
+			label,
+			input,
+			textarea {
+				display: block;
+				width: 100%;
+			}
+
+			input,
+			textarea {
+				margin-bottom: 1em;
+			}
+
+			textarea {
+				min-height: 8em;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<h1>The FormData Object</h1>
+
+		<form id="post">
+
+			<label for="title">Title</label>
+			<input type="text" name="title" id="title" value="Go to the beach">
+
+			<label for="body">Body</label>
+			<textarea id="body" name="body">Soak up the sun and swim in the ocean.</textarea>
+
+			<input type="hidden" name="userId" value="1">
+
+			<button>Submit</button>
+
+		</form>
+
+
+		<script>
+			// Get the form
+			let form = document.querySelector('#post');
+
+			// Get all field data from the form
+			let data = new FormData(form);
+
+
+
+			// Convert the data into an object
+			// let obj = {};
+			// for (let [key, value] of data) {
+			// 	obj[key] = value;
+			// }
+			// console.log(obj);
+
+
+
+			// Convert the data into an object,
+			// account for multiple fields with the same name
+			let obj = {};
+			for (let [key, value] of data) {
+				if (obj[key] !== undefined) {
+					if (!Array.isArray(obj[key])) {
+						obj[key] = [obj[key]];
+					}
+					obj[key].push(value);
+				} else {
+					obj[key] = value;
+				}
+			}
+			console.log(obj);
+
+
+
+			/**
+			 * Serialize FormData into a plain object
+			 * @param  {FormData} data The FormData object
+			 * @return {Object}        The plain object
+			 */
+			function serialize (data) {
+				let obj = {};
+				for (let [key, value] of data) {
+					if (obj[key] !== undefined) {
+						if (!Array.isArray(obj[key])) {
+							obj[key] = [obj[key]];
+						}
+						obj[key].push(value);
+					} else {
+						obj[key] = value;
+					}
+				}
+				return obj;
+			}
+
+			let serialized = JSON.stringify(serialize(data));
+		</script>
+	</body>
+</html>

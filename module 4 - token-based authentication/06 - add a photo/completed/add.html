@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Add Photo | Sparrow Photography</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<link rel="stylesheet" type="text/css" href="styles.css">
+	</head>
+	<body>
+
+		<nav class="nav">
+			<a class="logo" href="dashboard.html"><strong>Sparrow Photography Dashboard</strong></a>
+			<div class="nav-items" aria-live="polite">
+				<a href="logout.html">Logout</a>
+			</div>
+		</nav>
+
+		<h1>Add a Photo</h1>
+
+		<div id="app">Loading...</div>
+
+		<footer>
+			<p><em>Photos by Jack Sparrow. All rights reserved.</em></p>
+		</footer>
+
+
+		<script type="module">
+			import {store, component} from 'https://cdn.jsdelivr.net/npm/reefjs@12.1.1/dist/reef.es.min.js';
+			import {addPhoto} from './components/dashboard.js';
+			import {serialize} from './components/utilities.js';
+			import './components/logged-in.js';
+
+
+			// Form status and submitting state
+			let formStatus = store('');
+			let submitting = false;
+
+			/**
+			 * Generate the form HTML
+			 * @return {String} The form HTML string
+			 */
+			function formHTML () {
+				return `
+					<form data-form="add-photo">
+						<label for="name">Name</label>
+						<input type="text" name="name" id="name">
+
+						<label for="url">Photo URL</label>
+						<input type="text" name="url" id="url">
+
+						<label for="id">Photo ID</label>
+						<input type="text" name="id" id="id">
+
+						<label for="description">Description</label>
+						<textarea name="description" id="description"></textarea>
+
+						<label for="price">Price</label>
+						<input type="number" name="price" id="price">
+
+						<p><button>Add Photo</button></p>
+
+						<div role="status">${formStatus.value}</div>
+					</form>`;
+			}
+
+			/**
+			 * Handle submit events
+			 * @param  {Event} event The event object
+			 */
+			async function submitHandler (event) {
+
+				// Only run for [data-form="add-photo"] form
+				if (!event.target.matches('[data-form="add-photo"]')) return;
+
+				// Stop the form from reloading the page
+				event.preventDefault();
+
+				// If form is already submitting, ignore
+				if (submitting) return;
+
+				// Get the form data
+				let {name, url, id, description, price} = serialize(new FormData(event.target));
+
+				// If there's missing data, show status
+				if (!name || !url || !id || !description || !price) {
+					formStatus.value = 'Include a URL, ID, description, and price';
+					return;
+				}
+
+				// If the price isn't a valid number, error
+				if (Number.isNaN(parseFloat(price))) {
+					formStatus.value = 'Price must be a valid number';
+					return;
+				}
+
+				// Otherwise, update form status
+				submitting = true;
+				formStatus.value = 'Adding photo...';
+
+				// Add the photo
+				let add = await addPhoto({name, id, url, description, price});
+
+				// Show status message in the UI
+				formStatus.value = add.msg;
+				submitting = false;
+
+				// If response is OK, redirect to dashboard
+				if (add.ok) {
+					setTimeout(function () {
+						window.location.href = 'dashboard.html';
+					}, 3000);
+				}
+
+			}
+
+			// Initialize
+			component('#app', formHTML);
+			document.addEventListener('submit', submitHandler);
+		</script>
+
+	</body>
+</html>

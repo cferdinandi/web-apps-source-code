@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<title>Converting a string to HTML</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<style type="text/css">
+			body {
+				margin: 0 auto;
+				max-width: 40em;
+				width: 88%;
+			}
+
+			.active {
+				background-color: #fbf9c9;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<div id="app"></div>
+
+
+		<script>
+			// Get the #app element
+			let app = document.querySelector('#app');
+
+			// The app data
+			let wizards = ['Gandalf', 'Radagast', 'Merlin'];
+			let heading = 'Wizards';
+			let active = 'Gandalf';
+
+			/**
+			 * Create an HTML string from the data
+			 * @return {String} The HTML string
+			 */
+			function template () {
+
+				// If there are no wizards, show a message
+				if (!wizards.length) {
+					return `<p>There aren't any wizards yet.</p>`;
+				}
+
+				// Otherwise, show a list
+				return `
+					<h1>${heading}</h1>
+					<ul>
+						${wizards.map(function (wizard) {
+							return `<li ${wizard === active ? 'class="active"' : ''}>${wizard}</li>`;
+						}).join('')}
+					</ul>`;
+
+			}
+
+			/**
+			 * Convert a string into DOM nodes
+			 * @param  {String} str The HTML string
+			 * @return {Body}       The DOM nodes
+			 */
+			function stringToHTML (str) {
+				let parser = new DOMParser();
+				let doc = parser.parseFromString(str, 'text/html');
+				return doc.body;
+			}
+
+			// Get the template HTML
+			let str = template();
+			let html = stringToHTML(str);
+			console.log(html);
+
+			// Render the UI
+			app.innerHTML = str;
+		</script>
+	</body>
+</html>

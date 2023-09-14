@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Sparrow Photography</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<link rel="stylesheet" type="text/css" href="styles.css">
+	</head>
+	<body>
+
+		<nav class="nav">
+			<a class="logo" href="index.html"><strong>Sparrow Photography</strong></a>
+		</nav>
+
+		<div id="app">Loading...</div>
+
+
+		<footer>
+			<p><em>Photos by Jack Sparrow. All rights reserved.</em></p>
+		</footer>
+
+
+		<script>
+			// Get the #app element
+			let app = document.querySelector('#app');
+
+			/**
+			 * Get the photo ID from the URL
+			 * @return {String} The photo ID
+			 */
+			function getPhotoID () {
+				return new URL(window.location.href).searchParams.get('id');
+			}
+
+			/**
+			 * Get a photo by its ID
+			 * @param  {Array}  photos All photos
+			 * @param  {String} id     The ID of the photo to get
+			 * @return {Object}        The photo data
+			 */
+			function getPhotoByID (photos, id) {
+				return photos.find(function (photo) {
+					return photo.id === id;
+				});
+			}
+
+			/**
+			 * The HTML string for when no photo is found
+			 * @return {String} The HTML string
+			 */
+			function noPhotoHTML () {
+				return `
+					<h1>Uh oh!</h1>
+					<p>This photo is missing. Sorry!</p>`;
+			}
+
+			/**
+			 * Generate an HTML of available photos
+			 * @param  {Object} photos The photo data
+			 * @return {String}        The photo HTML string
+			 */
+			function photoHTML (photos) {
+
+				// Get the photo ID
+				let id = getPhotoID();
+				if (!id) return noPhotoHTML();
+
+				// Get the photo data
+				let photo = getPhotoByID(photos, id);
+				if (!photo) return noPhotoHTML();
+
+				// Update the document.title
+				document.title = `${photo.name} | ${document.title}`;
+
+				// Show the photo
+				return `
+					<h1>${photo.name}</h1>
+					<p><img alt="" src="${photo.url}"></p>
+					<p>${photo.description}</p>`;
+
+			}
+
+			/**
+			 * Fetch photos from the API
+			 */
+			async function getPhotos () {
+				try {
+					let response = await fetch('https://vanillajsacademy.com/api/photos.json');
+					if (!response.ok) throw response;
+					let photos = await response.json();
+					app.innerHTML = photoHTML(photos);
+				} catch (error) {
+					console.warn(error);
+					app.innerHTML = photoHTML();
+				}
+			}
+
+			// Initialize
+			getPhotos();
+		</script>
+
+	</body>
+</html>

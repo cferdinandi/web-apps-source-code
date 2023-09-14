@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>encodeURIComponent()</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	</head>
+	<body>
+
+
+		<script>
+			// An array of wizards
+			let wizards = ['Gandalf', 'Ursula', 'Merlin'];
+
+			// Create a URL string
+			let url = `https://vanillajsacademy.com?wizards=${encodeURIComponent(wizards)}`;
+			console.log(url);
+
+			// Get the wizards query string parameter
+			let wizardsParam = new URL(url).searchParams.get('wizards');
+			console.log(wizardsParam);
+
+			// Convert it to an array
+			let arr = wizardsParam.split(',');
+			console.log(arr);
+		</script>
+
+	</body>
+</html>

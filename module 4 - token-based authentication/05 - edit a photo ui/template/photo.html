@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Sparrow Photography</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<link rel="stylesheet" type="text/css" href="styles.css">
+	</head>
+	<body>
+
+		<nav class="nav">
+			<a class="logo" href="index.html"><strong>Sparrow Photography</strong></a>
+			<div class="nav-items">
+				<a href="checkout.html"><span aria-hidden="true">&#x1f6d2;</span> Cart <span id="cart-count"></span></a>
+			</div>
+		</nav>
+
+		<div id="app">Loading...</div>
+
+
+		<footer>
+			<p><em>Photos by Jack Sparrow. All rights reserved.</em></p>
+		</footer>
+
+
+		<script type="module">
+			import {component} from 'https://cdn.jsdelivr.net/npm/reefjs@12/dist/reef.es.min.js';
+			import {getPhotos} from './components/api.js';
+			import {addToCart, inCart} from './components/cart.js';
+			import {getPhotoID, getPhotoByID} from './components/utilities.js';
+
+
+			// Hold the photo data
+			let photos = [];
+
+			/**
+			 * The HTML string for when no photo is found
+			 * @return {String} The HTML string
+			 */
+			function noPhotoHTML () {
+				return `
+					<h1>Uh oh!</h1>
+					<p>This photo is missing. Sorry!</p>`;
+			}
+
+			/**
+			 * Generate an HTML of available photos
+			 * @return {String}        The photo HTML string
+			 */
+			function photoHTML () {
+
+				// Get the photo ID
+				let id = getPhotoID();
+				if (!id) return noPhotoHTML();
+
+				// Get the photo data
+				let photo = getPhotoByID(photos, id);
+				if (!photo) return noPhotoHTML();
+
+				// Update the document.title
+				document.title = `${photo.name} | ${document.title}`;
+
+				// Show the photo
+				return `
+					<h1>${photo.name}</h1>
+					<p><img alt="" src="${photo.url}"></p>
+					<p>${photo.description}</p>
+					<p aria-live="polite">
+						${
+							inCart(photo.id) ?
+							`<a href="checkout.html"><em>"${photo.name}" added to cart</em></a>` :
+							`<button data-add-to-cart="${photo.id}">Add to Cart - $${photo.price}</button>`
+						}
+					</p>`;
+
+			}
+
+			/**
+			 * Handle click events
+			 * @param  {Event} event The event object
+			 */
+			function clickHandler (event) {
+
+				// Only run for [data-add-to-cart] buttons
+				let id = event.target.getAttribute('data-add-to-cart');
+				if (!id) return;
+
+				// Add photo to cart
+				addToCart(id);
+
+			}
+
+			// Initialize
+			getPhotos().then(function (data) {
+				photos = data;
+				component('#app', photoHTML);
+				document.addEventListener('click', clickHandler);
+			});
+		</script>
+
+	</body>
+</html>

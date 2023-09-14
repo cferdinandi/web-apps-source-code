@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<title>Scoping traditional scripts</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	</head>
+
+	<body>
+
+
+		<script>
+			// answer is scoped to the run() function
+			function run () {
+				let answer = 42;
+				console.log(answer);
+			}
+			run();
+
+			// name is scoped to the IIFE
+			(function () {
+				let name = 'Radagast';
+				console.log(name);
+			})();
+
+			// Because they're scoped to their functions, both of these will throw an error
+			console.log(answer);
+			console.log(name);
+		</script>
+	</body>
+</html>

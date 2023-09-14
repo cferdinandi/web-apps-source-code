@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<title>Calling the Stripe API</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	</head>
+
+	<body>
+
+
+		<script>
+			async function checkout () {
+
+				// Call the middleman API
+				let request = await fetch('https://path-to-your-stripe.workers.dev', {
+					method: 'POST',
+					headers: {
+						'Content-type': 'application/json'
+					},
+					body: JSON.stringify({
+						line_items: [{
+							price_data: {
+								currency: 'usd',
+								product_data: {
+									name: 'Anchor',
+									description: 'A boat sits in a bay of gorgeous topaz water, an anchor line cast from her bow.',
+									images: ['https://cdn.gomakethings.com/academy/ecommerce/anchor.jpg']
+								},
+								unit_amount: 2900,
+							},
+							quantity: 1,
+						}],
+						success_url: 'http://localhost:8000/success.html',
+						cancel_url: 'http://localhost:8000/checkout.html',
+					})
+				});
+
+				// Get the response
+				let response = await request.json();
+
+				console.log(response);
+
+			}
+
+			checkout();
+		</script>
+	</body>
+</html>

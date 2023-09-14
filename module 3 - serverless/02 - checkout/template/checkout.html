@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Checkout | Sparrow Photography</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<link rel="stylesheet" type="text/css" href="styles.css">
+	</head>
+	<body>
+
+		<nav class="nav">
+			<a class="logo" href="index.html"><strong>Sparrow Photography</strong></a>
+			<div class="nav-items">
+				<a aria-current="page" href="checkout.html"><span aria-hidden="true">&#x1f6d2;</span> Cart <span id="cart-count"></span></a>
+			</div>
+		</nav>
+
+		<h1>Checkout</h1>
+		<div id="app">Loading...</div>
+
+
+		<footer>
+			<p><em>Photos by Jack Sparrow. All rights reserved.</em></p>
+		</footer>
+
+
+		<script type="module">
+			import {component} from 'https://cdn.jsdelivr.net/npm/reefjs@12/dist/reef.es.min.js';
+			import {getPhotos} from './components/api.js';
+			import {removeFromCart, inCart} from './components/cart.js';
+			import {getPhotoByID} from './components/utilities.js';
+
+
+			// Hold the photo data
+			let photos = [];
+
+			// Current status
+			let status = store([]);
+
+			/**
+			 * Generate the cart HTML
+			 * @return {String} The cart HTML string
+			 */
+			function cartHTML () {
+
+				// Get the photos that are in the cart
+				let photosInCart = photos.filter(function (photo) {
+					return inCart(photo.id);
+				});
+
+				// If there are no items in the cart
+				if (!photosInCart.length) {
+					return '<p>You have no photos in your cart.</p>';
+				}
+
+				// Otherwise, generate table
+				return `
+					<table>
+						<thead>
+							<tr>
+								<th width="150">Photo</th>
+								<th>Name</th>
+								<th>Price</th>
+								<th class="text-right">Remove Item</th>
+							</tr>
+						</thead>
+						<tbody>
+							${photosInCart.map(function (photo) {
+								return `
+									<tr>
+										<td><img alt="${photo.description}" src="${photo.url}"></td>
+										<td>${photo.name}</td>
+										<td>$${photo.price}</td>
+										<td class="text-right">
+											<button data-remove-from-cart="${photo.id}" aria-label="Remove '${photo.name}'">
+												&#10006;
+											</button>
+										</td>
+									</tr>`;
+
+							}).join('')}
+						</tbody>
+					</table>
+					<p class="text-right">
+						<strong>Total:</strong> $${photosInCart.reduce(function (total, photo) {
+							return total + photo.price;
+						}, 0)}
+					</p>
+					<div aria-live="polite">${status.join('<br>')}</div>`;
+
+			}
+
+			/**
+			 * Handle click events
+			 * @param  {Event} event The event object
+			 */
+			function clickHandler (event) {
+
+				// Get the photo ID
+				let id = event.target.getAttribute('data-remove-from-cart');
+				if (!id) return;
+
+				// Remove the item from the cart
+				removeFromCart(id);
+
+				// Get the photo details
+				let photo = getPhotoByID(photos, id);
+				if (!photo) return;
+
+				// Update the status message
+				let msg = `"${photo.name}" was removed from your cart.`;
+				status.push(msg);
+				setTimeout(function () {
+					status.splice(status.indexOf(msg), 1);
+				}, 3000);
+
+			}
+
+			// Initialize
+			getPhotos().then(function (data) {
+				photos = data;
+				component('#app', cartHTML);
+				document.addEventListener('click', clickHandler);
+			});
+		</script>
+
+	</body>
+</html>

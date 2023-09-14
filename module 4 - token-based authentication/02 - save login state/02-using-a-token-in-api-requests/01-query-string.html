@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<title>Credentials with a query string</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	</head>
+
+	<body>
+
+
+		<script>
+			// Make the API call
+			fetch('https://my-app.com/wizards?token=1234').then(function (response) {
+				if (response.ok) {
+					return response.json();
+				}
+				throw response;
+			}).then(function (data) {
+				render(data);
+			}).catch(function (error) {
+				console.log(error);
+			});
+		</script>
+	</body>
+</html>

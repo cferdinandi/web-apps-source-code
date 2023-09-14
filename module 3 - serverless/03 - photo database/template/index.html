@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Sparrow Photography</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<link rel="stylesheet" type="text/css" href="styles.css">
+	</head>
+	<body>
+
+		<nav class="nav">
+			<a class="logo" href="index.html"><strong>Sparrow Photography</strong></a>
+			<div class="nav-items">
+				<a href="checkout.html"><span aria-hidden="true">&#x1f6d2;</span> Cart <span id="cart-count"></span></a>
+			</div>
+		</nav>
+
+		<h1>Sparrow Photography</h1>
+
+		<div id="app">Loading...</div>
+
+
+		<footer>
+			<p><em>Photos by Jack Sparrow. All rights reserved.</em></p>
+		</footer>
+
+
+		<script type="module">
+			import {render} from 'https://cdn.jsdelivr.net/npm/reefjs@12/dist/reef.es.min.js';
+			import {getPhotos} from './components/api.js';
+			import './components/cart.js';
+
+			/**
+			 * Generate an HTML of available photos
+			 * @param  {Object} photos The photo data
+			 * @return {String}        A list of available photos
+			 */
+			function photoHTML (photos) {
+
+				// If there are no photos
+				if (!photos.length) {
+					return '<p>There are no available photos at this time. Please try again later. Sorry!</p>';
+				}
+
+				// Otherwise, show photos
+				return `
+					<p>High-end photography from the Seven Seas, brought to you by world-famous photographer Captain Jack Sparrow.</p>
+					<div id="photos">
+						${photos.map(function (photo) {
+							return `
+								<div class="photo">
+									<a href="/photo.html?id=${encodeURIComponent(photo.id)}">
+										<img alt="${photo.description}" src="${photo.url}">
+										<div>${photo.name}</div>
+									</a>
+								</div>`;
+						}).join('')}
+					</div>`;
+
+			}
+
+			// Initialize
+			getPhotos().then(function (photos) {
+				render('#app', photoHTML(photos));
+			});
+		</script>
+
+	</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Login | Sparrow Photography</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<link rel="stylesheet" type="text/css" href="styles.css">
+	</head>
+	<body>
+
+		<nav class="nav">
+			<a class="logo" href="index.html"><strong>Sparrow Photography</strong></a>
+		</nav>
+
+		<h1>Login</h1>
+
+		<form data-form="login">
+			<label for="username">Username</label>
+			<input type="text" name="username" id="username">
+
+			<label for="password">Password</label>
+			<input type="password" name="password" id="password">
+
+			<p><button>Login</button></p>
+
+			<div role="status"></div>
+		</form>
+
+
+
+		<script type="module">
+			import {getToken, setToken} from './components/token.js';
+			import {serialize} from './components/utilities.js';
+
+
+			// Get DOM elements
+			let form = document.querySelector('[data-form="login"]');
+			let formStatus = form.querySelector('[role="status"]');
+
+			/**
+			 * Display form status message
+			 * @param  {String} msg The message to announce
+			 */
+			function announce (msg) {
+				formStatus.textContent = msg;
+			}
+
+			/**
+			 * Handle submit events
+			 * @param  {Event} event The event object
+			 */
+			async function submitHandler (event) {
+
+				// Stop form from reloading the page
+				event.preventDefault();
+
+				// If form is already being submitted, ignore
+				if (form.hasAttribute('data-submitting')) return;
+
+				// Get the form data
+				let {username, password} = serialize(new FormData(form));
+
+				// Make sure username and password are provided
+				if (!username || !password) {
+					announce('Please include a username and password.');
+					return;
+				}
+
+				// Disable form
+				form.setAttribute('data-submitting', true);
+
+				// Announce submitting
+				announce('Logging in...');
+
+				try {
+
+					// Request a new authentication token
+					let login = await fetch('https://academy-expert-users.gomakethings.workers.dev', {
+						method: 'POST',
+						headers: {
+							'Authorization': `Basic ${btoa(`${username}:${password}`)}`
+						}
+					});
+
+					// Make sure response was successful
+					if (!login.ok) throw login;
+
+					// Get the token from the response
+					let {token} = await login.json();
+
+					// Save the token to localStorage
+					setToken(token);
+
+					// Redirect to dashboard
+					announce('Success! Redirecting to the dashboard.');
+					window.location.href = 'dashboard.html';
+
+				} catch (error) {
+					form.reset();
+					form.removeAttribute('data-submitting');
+					announce('Something went wrong. Please try again.');
+				}
+
+			}
+
+			// If the user is already logged in, redirect them to the dashboard
+			if (getToken()) {
+				announce(`You're already logged in. Redirecting to the dashboard.`);
+				window.location.href = 'dashboard.html';
+			}
+
+			// Listen for submit events
+			form.addEventListener('submit', submitHandler);
+		</script>
+
+	</body>
+</html>

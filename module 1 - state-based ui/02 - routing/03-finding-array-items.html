@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<title>Array.find()</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	</head>
+
+	<body>
+
+
+		<script>
+			let sandwiches = ['turkey', 'tuna', 'ham', 'pb&j'];
+
+			// Get the first item with the value "turkey"
+			let turkey = sandwiches.find(function (sandwich) {
+				return sandwich === 'turkey';
+			});
+			console.log(turkey);
+
+
+			// Get the first item with three letters
+			let threeLetters = sandwiches.find(function (sandwich) {
+				return sandwich.length === 3;
+			});
+			console.log(threeLetters);
+		</script>
+	</body>
+</html>

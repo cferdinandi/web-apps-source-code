@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Edit Photo | Sparrow Photography</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<link rel="stylesheet" type="text/css" href="styles.css">
+	</head>
+	<body>
+
+		<nav class="nav">
+			<a class="logo" href="dashboard.html"><strong>Sparrow Photography Dashboard</strong></a>
+			<div class="nav-items" aria-live="polite">
+				<a href="logout.html">Logout</a>
+			</div>
+		</nav>
+
+		<div id="app">Loading...</div>
+
+		<footer>
+			<p><em>Photos by Jack Sparrow. All rights reserved.</em></p>
+		</footer>
+
+
+		<script type="module">
+			import {render} from 'https://cdn.jsdelivr.net/npm/reefjs@12/dist/reef.es.min.js';
+			import {getPhotoID} from './components/utilities.js';
+			import {getToken} from './components/token.js';
+			import {dashURL} from './components/endpoints.js';
+			import './components/logged-in.js';
+
+
+			// Get the photo ID
+			let id = getPhotoID();
+
+			// Template
+			let template =
+				`<h1>Edit Photo</h1>
+				<p>Update the desired values and run this in the console:</p>
+<pre><code>let request = await fetch('${dashURL}', {
+	method: 'PUT',
+	body: JSON.stringify({
+		id: '${id}',
+		name: 'Photo Name',
+		description: 'Photo description',
+		price: 99,
+
+	}),
+	headers: {
+		'Content-type': 'application/json',
+		'Authorization': 'Bearer ${getToken()}'
+	}
+});
+
+let response = await request.text();
+
+console.log(response);</code></pre>`;
+
+			// Render UI
+			render('#app', template);
+		</script>
+
+	</body>
+</html>

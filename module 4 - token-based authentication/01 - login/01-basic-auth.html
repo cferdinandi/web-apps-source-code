@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<title>Credentials with basic auth</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	</head>
+
+	<body>
+
+
+		<script>
+			// The username and password
+			// DO NOT store credentials in your JS file like this
+			let username = 'myUsername';
+			let password = '1234';
+			let auth = btoa(`${username}:${password}`);
+
+			// Authenticate (dummy API)
+			fetch('https://my-app.com/auth', {
+				headers: {
+					'Authorization': `Basic ${auth}`
+				}
+			}).then(function (response) {
+				if (response.ok) {
+					return response.json();
+				}
+				throw response;
+			}).then(function (data) {
+				console.log(data);
+			}).catch(function (error) {
+				console.warn(error);
+			});
+		</script>
+	</body>
+</html>

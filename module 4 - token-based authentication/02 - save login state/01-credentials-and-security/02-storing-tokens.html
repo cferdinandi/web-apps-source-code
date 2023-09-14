@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<title>Authentication Token Vulnerabilities</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	</head>
+
+	<body>
+
+
+		<script>
+			// Vulnerable to XSS
+			localStorage.setItem('token', 'abcd1234');
+
+			// Vulnerable to CSRF
+			document.cookie = 'token=abcd1234; secure;';
+
+			// This won't work
+			// The httponly flag can't be set with JS either
+			document.cookie = 'token=abcd1234; secure; httponly;';
+		</script>
+	</body>
+</html>

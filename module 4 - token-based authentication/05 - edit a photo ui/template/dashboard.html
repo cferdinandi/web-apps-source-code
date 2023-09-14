@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Dashboard | Sparrow Photography</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<link rel="stylesheet" type="text/css" href="styles.css">
+	</head>
+	<body>
+
+		<nav class="nav">
+			<a class="logo" href="dashboard.html"><strong>Sparrow Photography Dashboard</strong></a>
+			<div class="nav-items" aria-live="polite">
+				<a href="logout.html">Logout</a>
+			</div>
+		</nav>
+
+		<h1>Dashboard</h1>
+
+		<div id="app">Loading...</div>
+
+		<footer>
+			<p><em>Photos by Jack Sparrow. All rights reserved.</em></p>
+		</footer>
+
+
+		<script type="module">
+			import {render} from 'https://cdn.jsdelivr.net/npm/reefjs@12/dist/reef.es.min.js';
+			import {getPhotos} from './components/dashboard.js';
+			import './components/logged-in.js';
+
+
+			/**
+			 * Generate an HTML string of photos
+			 * @param  {Object} photos The photo data
+			 * @return {String}        A list of photos
+			 */
+			function photoHTML (photos) {
+
+				// If there are no photos
+				if (!photos.length) {
+					return '<p>There are no photos.</p>';
+				}
+
+				// Otherwise, show photos
+				return `
+					<p>Click on a photo to edit it.</p>
+					<div id="photos">
+						${photos.map(function (photo) {
+							return `
+								<div class="photo">
+									<a href="edit.html?id=${photo.id}">
+										<img alt="${photo.description}" src="${photo.url}">
+										<div>${photo.name} - $${photo.price}</div>
+									</a>
+								</div>`;
+						}).join('')}
+					</div>`;
+
+			}
+
+			// Initialize
+			getPhotos().then(function (photos) {
+				render('#app', photoHTML(photos));
+			});
+		</script>
+
+	</body>
+</html>

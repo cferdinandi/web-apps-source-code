@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Sparrow Photography</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<style type="text/css">
+			body {
+				margin: 0 auto;
+				max-width: 50em;
+				width: 88%;
+			}
+
+
+			/**
+			 * Grid Layout
+			 */
+
+			@media (min-width: 20em) {
+				#photos {
+					display: grid;
+					grid-template-columns: repeat(2, 1fr);
+					grid-template-rows: 1fr;
+					grid-column-gap: 2em;
+					grid-row-gap: 2em;
+				}
+			}
+
+			@media (min-width: 32em) {
+				#photos {
+					grid-template-columns: repeat(3, 1fr);
+				}
+			}
+
+			@media (min-width: 42em) {
+				#photos {
+					grid-template-columns: repeat(4, 1fr);
+				}
+			}
+
+
+			/**
+			 * Nav Menu
+			 */
+
+			.nav {
+				padding: 1em 0;
+			}
+
+			.nav a {
+				text-decoration: none;
+			}
+
+			.nav a:focus,
+			.nav a:hover {
+				text-decoration: underline;
+			}
+
+
+			/**
+			 * Footer
+			 */
+
+			footer {
+				border-top: 1px solid #e5e5e5;
+				margin-top: 5em;
+			}
+
+
+			/**
+			 * Responsive images
+			 */
+
+			img {
+				height: auto;
+				max-width: 100%;
+			}
+		</style>
+	</head>
+	<body>
+
+		<nav class="nav">
+			<a class="logo" href="index.html"><strong>Sparrow Photography</strong></a>
+		</nav>
+
+		<div id="app">Loading...</div>
+
+
+		<footer>
+			<p><em>Photos by Jack Sparrow. All rights reserved.</em></p>
+		</footer>
+
+
+		<script>
+			// Get the #app element
+			let app = document.querySelector('#app');
+
+			// Store the photo data
+			let photos;
+
+			/**
+			 * Get a photo by its ID
+			 * @param  {Array}  photos All photos
+			 * @param  {String} id     The ID of the photo to get
+			 * @return {Object}        The photo data
+			 */
+			function getPhotoByID (photos, id) {
+				return photos.find(function (photo) {
+					return photo.id === id;
+				});
+			}
+
+			/**
+			 * Generate an HTML of available photos
+			 * @param  {Object} photos The photo data
+			 * @return {String}        A list of available photos
+			 */
+			function photoHTML (photos) {
+
+				// If there are no photos
+				if (!photos || !photos.length) {
+					return '<h1>Sparrow Photography</h1><p>There are no available photos at this time. Please try again later. Sorry!</p>';
+				}
+
+				// Otherwise, show photos
+				return `
+					<h1>Sparrow Photography</h1>
+					<p>High-end photography from the Seven Seas, brought to you by world-famous photographer Captain Jack Sparrow.</p>
+					<div id="photos">
+						${photos.map(function (photo) {
+							return `
+								<div class="photo">
+									<a data-photo-link="${photo.id}" href="photo.html?id=${encodeURIComponent(photo.id)}">
+										<img alt="${photo.description}" src="${photo.url}">
+										<div>${photo.name}</div>
+									</a>
+								</div>`;
+						}).join('')}
+					</div>`;
+
+			}
+
+			/**
+			 * Fetch photos from the API
+			 */
+			async function getPhotos () {
+				try {
+					let response = await fetch('https://vanillajsacademy.com/api/photos.json');
+					if (!response.ok) throw response;
+					photos = await response.json();
+					app.innerHTML = photoHTML(photos);
+				} catch (error) {
+					console.warn(error);
+					app.innerHTML = photoHTML();
+				}
+			}
+
+			/**
+			 * Handle click events
+			 * @param  {Event} event The event object
+			 */
+			function clickHandler (event) {
+
+				// Get the photo ID
+				let link = event.target.closest('[data-photo-link]');
+				if (!link) return;
+				let id = link.getAttribute('data-photo-link');
+
+				// Stop the URL from loading the page
+				event.preventDefault();
+
+				// Get the matching photo
+				let photo = getPhotoByID(photos, id);
+				if (!photo) return;
+
+				app.innerHTML =
+					`<h1>${photo.name}</h1>
+					<p><img alt="" src="${photo.url}"></p>
+					<p>${photo.description}</p>`
+
+			}
+
+			// Initialize
+			getPhotos();
+			document.addEventListener('click', clickHandler);
+		</script>
+
+	</body>
+</html>
