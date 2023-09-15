@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Manual setters</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	</head>
+	<body>
+
+		<script src="https://cdn.jsdelivr.net/npm/reefjs@12/dist/reef.min.js"></script>
+		<script>
+			let {store} = reef;
+
+			// Listen for data changes
+			document.addEventListener('reef:store', function (event) {
+				console.log('The data was updated!');
+				console.log(event.detail);
+			});
+
+			// Create setter object
+			let todos = (function () {
+
+			    let data = store(['Swim', 'Climb', 'Jump', 'Play']);
+
+			    // Add an item to the todo list
+			    function add (todo) {
+			        data.push(todo);
+			    }
+
+			    // Remove a todo item by name
+			    function remove (todo) {
+			        let index = data.indexOf(todo);
+			        if (index < 0) return;
+			        data.splice(index, 1);
+			    }
+
+			    // Return a copy of the todo items
+			    function get () {
+			        return Array.from(data);
+			    }
+
+			    return {add, remove, get};
+
+			})();
+
+			// This will update the data
+			todos.add('Take a nap');
+
+			// This WILL not
+			todos.get().push('Do it again tomorrow');
+		</script>
+	</body>
+</html>

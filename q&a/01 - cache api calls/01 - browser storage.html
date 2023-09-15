@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Cache with Browser Storage</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	</head>
+	<body>
+
+		<script>
+			async function getData () {
+
+			    // Check for cached data
+			    let saved = JSON.parse(localStorage.getItem('apiData'));
+			    if (saved) {
+			        return saved;
+			    }
+
+			    // Otherwise, call the API
+			    let response = await fetch('/api-endpoint');
+			    let data = await response.json();
+
+			    // Save the data to localStorage
+			    localStorage.setItem('apiData', JSON.stringify(data));
+
+			    return data;
+
+			}
+		</script>
+	</body>
+</html>

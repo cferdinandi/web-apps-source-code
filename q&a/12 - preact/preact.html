@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Preact Demo</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<style type="text/css">
+			body {
+				margin: 1em auto;
+				max-width: 40em;
+				width: 88%;
+			}
+		</style>
+	</head>
+	<body>
+
+		<h1>Wizards</h1>
+
+		<div id="app"></div>
+
+		<script type="module">
+			import {html, render, signal} from 'https://cdn.jsdelivr.net/npm/preact-htm-signals-standalone/dist/standalone.js';
+
+			// Get the #app element
+			let app = document.querySelector('#app');
+
+			// Reactive data
+			let wizards = signal(['Merlin', 'Ursula', 'Radagast']);
+
+			/**
+			 * Create the HTML based on the app state
+			 */
+			function template () {
+
+				// If there are no todos, show a message
+				if (!wizards.value.length) {
+					return html`<p><em>There are no wizards.</em></p>`;
+				}
+
+				// Otherwise, render the wizard list
+				return html`
+					<ul>
+						${wizards.value.map(function (wizard) {
+							return html`<li>${wizard}</li>`;
+						})}
+					</ul>`;
+
+			}
+
+			// Create a component
+			// Renders into the UI, and updates whenever the data changes
+			render(html`<${template} />`, app);
+
+			// Run some updates
+			setTimeout(function () {
+				wizards.value = [...wizards.value, 'Keyleth'];
+			}, 3000);
+
+			setTimeout(function () {
+				let temp = [...wizards.value];
+				temp.splice(2, 1);
+				wizards.value = temp;
+			}, 5000);
+		</script>
+	</body>
+</html>
