@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<title>Measuring JavaScript Performance</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<style type="text/css">
+			body {
+				margin: 1em auto;
+				max-width: 40em;
+				width: 88%;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<h1>Measuring JavaScript Performance</h1>
+
+		<p>
+			<button class="js-click" data-click>Click Me</button>
+		</p>
+
+
+		<script>
+			let count = 100000;
+
+			// Class selector
+			console.time('Class');
+			for (let i = 0; i < count; i++) {
+				document.querySelector('.js-click');
+			}
+			console.timeEnd('Class');
+
+			//Data Attribute
+			console.time('Data Attribute');
+			for (i = 0; i < count; i++) {
+				document.querySelector('[data-click]');
+			}
+			console.timeEnd('Data Attribute');
+		</script>
+	</body>
+</html>
